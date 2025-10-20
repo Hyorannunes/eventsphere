@@ -6,24 +6,28 @@ on:
       - main
 
 jobs: 
-  steps: 
-    - name: Checkout code
-      uses: actions/checkout@v4
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-    - name: Setup Nome.Js  
-      uses: actions/setup-node@v4
-      with: 
-        node-version: "20"
+    steps: 
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: npm install
+      - name: Setup Nome.Js  
+        uses: actions/setup-node@v4
+        with: 
+          node-version: "20"
 
-    - name: Generate Prisma Client
-      run: npx prisma generate
+      - name: Install dependencies
+        run: npm install
 
-    - name: Deploy to Render
-      uses: johnbeynon/render-deploy-action@v0.0.8
-      with: 
-        service-id: ${{ secrets.RENDER_SERVICE_ID }}
-        api-key : ${{ secrets.RENDER_API_KEY }}
-        wait-for-success: true
+      - name: Install dependencies (frontend)
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Deploy to Render
+        uses: johnbeynon/render-deploy-action@v0.0.8
+        with: 
+          service-id: ${{ secrets.RENDER_SERVICE_ID }}
+          api-key : ${{ secrets.RENDER_API_KEY }}
+          wait-for-success: true
